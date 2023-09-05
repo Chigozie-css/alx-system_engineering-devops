@@ -1,2 +1,2 @@
 #!/bin/bash
-echo $PATH | tr ":" "\n" | wc -1
+num_dirs=${#path_dirs[@]} 
