@@ -1,14 +1,4 @@
 #!/bin/bash
-
 # Get the PID of the script
-SCRIPT_PID=$$
 
-# Get the PID and process name of processes containing "bash" in their name
-for pid in /proc/*/status; do
-    	pid_number=$(basename "$(dirname "$pid")")
-    	process_name=$(awk '/Name/ {print $2}' "$pid")
-    
-    	if [ "$process_name" = "bash" ] && [ "$pid_number" != "$SCRIPT_PID" ]; then
-        	echo "$pid_number $process_name"
-    	fi
-done
+pgrep -l bash

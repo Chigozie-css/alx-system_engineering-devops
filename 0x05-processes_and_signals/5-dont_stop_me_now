@@ -1,17 +1,4 @@
 #!/usr/bin/env bash
+# Stop the "4-to_infinity_and_beyond" process
 
-# Save current bash PID
-BASH_PID=$BASHPID
-
-# Launch 4-to_infinity_and_beyond in background 
-./4-to_infinity_and_beyond &
-
-# Get background process ID
-BG_PID=$!
-
-# Kill background process after some time
-sleep 27
-kill $BG_PID 
-
-# Kill current shell as well to terminate completely
-kill $BASH_PID
+pgrep -f 4-to_infinity_and_beyond | xargs kill

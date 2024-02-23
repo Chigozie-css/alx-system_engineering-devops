@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2009
+# List all the bash processes
 
-USER=$(whoami)
-ps -ef | grep "SUSER.*bash"
+# Shellcheck disable=SC2009
+ps -auxf | grep bash
