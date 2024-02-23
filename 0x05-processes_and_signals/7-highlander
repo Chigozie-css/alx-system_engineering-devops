@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Highlander
+
+# Define a trap to print "I am invincible!!!" when receiving a SIGTERM signal
+trap "echo I am invincible!!!" SIGTERM
+
+# Infinite loop printing "To infinity and beyond" every 2 seconds
+while true; do
+	echo "To infinity and beyond"
+	sleep 2
+done

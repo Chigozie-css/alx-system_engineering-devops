@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Stop me if you can
+
+# Use pkill to terminate processes matching the pattern "7-highlander"
+pkill -f 7-highlander

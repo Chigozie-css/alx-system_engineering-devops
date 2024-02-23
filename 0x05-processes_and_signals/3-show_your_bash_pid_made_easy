@@ -1,4 +1,5 @@
 #!/bin/bash
-# Get the PID of the script
+# Show PID of all bash processes
 
+# pgrep with -l option lists the process names and their PIDs
 pgrep -l bash
