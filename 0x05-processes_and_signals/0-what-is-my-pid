@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Rhus script displays its own PID
+
+echo $$ # $$ represents the PID of the current script
