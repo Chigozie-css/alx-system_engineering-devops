@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#!/usr/bin/env bash
+# End the highlander process
+
+# Use pgrep to find the process ID of "7-highlander" and then kill it with SIGKILL (-9)
+pgrep -f 7-highlander | xargs kill -9
