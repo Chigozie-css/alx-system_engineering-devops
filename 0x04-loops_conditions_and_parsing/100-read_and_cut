@@ -2,5 +2,9 @@
 # This script displays the username, user id, and home directory path for each user in /etc/passwd
 
 while IFS=':' read -r username _ uid _ _ home _; do
-	echo "$username:$uid:share"
+	if [ -n "$username" ] && [ -n "$uid" ] && [ -n "$home" ]; then
+		echo "$username:$uid:home"
+	else
+		echo "Invalid entry in /etc/passwd"
+	fi
 done < /etc/passwd
