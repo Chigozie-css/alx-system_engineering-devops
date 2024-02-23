@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Manage process and PID file
+
+# Define the PID file path
+file="/var/run/myscript.pid"
+
+# Check if the PID file exists, if not, create it
+if [ ! -e "$file" ]; then
+  touch "$file"
+fi
+
+# Start a background sleep process
+sleep 2 &
+
+# Write the PID of the sleep process to the PID file
+echo "$!" > "$file"
+
+# Define signal handlers
+# Print message and clean up when receiving SIGTERM or SIGQUIT
+trap 'echo "I hate the kill command"; rm "$file"; exit' SIGTERM SIGQUIT
+
+# Print message when receiving SIGINT
+trap "echo Y U no love me?!" SIGINT
+
+# Main loop
+while true; do
+	echo "To infinity and beyond"
+	sleep 2
+done
