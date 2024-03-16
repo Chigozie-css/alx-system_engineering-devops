@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Script that pings an IP address passed as an argument
+
+# IP variable
+IP="${1}"
+
+# Function to check if IP is provided
+check_ip() {
+    if [ -z "$IP" ]; then
+        echo "Usage: $0 {IP_ADDRESS}"
+        exit 1
+    fi
+}
+
+# Main script logic
+check_ip
+ping -c 5 "$IP"
