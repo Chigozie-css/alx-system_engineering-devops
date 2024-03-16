@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Retrieves and displays all active IPv4 addresses on the machine.
+
+# Previously, ifconfig was used to achieve this, but now 'ip' is utilized instead.
+# This change is due to 'ip' being a newer and more universally available command,
+# whereas 'ifconfig' may not be present on all systems.
+
+ip -4 -o addr show | awk '{print $4}' | cut -d "/" -f 1
