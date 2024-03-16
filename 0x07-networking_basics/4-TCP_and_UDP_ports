@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # Revealing the symphony of network activity, this script orchestrates a display of TCP and UDP listening ports.
-netstat -l
+netstat -lntp
