@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 def match_school(input)
-  input.match(/School/) ? "School" : ""
+  input.scan(/School/).join
 end
 
 puts match_school(ARGV[0])
