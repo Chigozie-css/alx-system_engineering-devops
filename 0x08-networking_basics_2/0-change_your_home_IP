@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# changes the following domain resolve ips
+#   localhost from 127.0.0.1 to 127.0.0.2
+#   facebook.com from 157.240.11.35 to 8.8.8.8
+
+# Store the path to the new hosts file
+new_hosts_file="/tmp/hosts.new"
+
+# Copy the original hosts file
+cp /etc/hosts "$new_hosts_file"
+
+# Replace the IP address for localhost
+sed -i 's/^127.0.0.1[[:space:]]*localhost/127.0.0.2\tlocalhost/' "$new_hosts_file"
+
+# Replace the IP address for facebook.com
+sed -i 's/^157.240.11.35[[:space:]]*facebook.com/8.8.8.8\tfacebook.com/' "$new_hosts_file"
+
+# Overwrite the original hosts file with the modified one
+cp -f "$new_hosts_file" /etc/hosts
+
+# Clean up temporary file
+rm "$new_hosts_file"
