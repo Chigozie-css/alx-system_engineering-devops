@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Configures a new Ubuntu machine by installing Nginx,
+# which should be listening on port 80 to serve a page
+# that returns a "Hello World" string and redirects /redirect_me to a YouTube video.
+#
+# Colors
+blue='\e[1;34m'
+brown='\e[0;33m'
+green='\e[1;32m'
+reset='\033[0m'
+
+echo -e "${blue}Updating and installing ${brown}Nginx${blue}.${reset}\n"
+sudo apt-get update -y -qq && \
+sudo apt-get install nginx -y
+
+echo -e "\n${blue}Setting up some minor stuff.${reset}\n"
+
+# Starting Nginx service
+sudo service nginx start
+
+# Allowing Nginx through the firewall
+sudo ufw allow 'Nginx HTTP'
+
+# Giving the user ownership to website files for easy editing
+sudo chown -R "$USER":"$USER" /var/www/html
+sudo chmod -R 755 /var/www
+
+# Backup the default index
+cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
+
+# Creating a new index
+echo -e "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
+
+# Setting up /redirect_me to a YouTube video
+sudo sed -i '24i\	rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
+
+# Restarting Nginx
+sudo service nginx restart
+
+echo -e "\n${green}Completed.${reset} ✅\n"
