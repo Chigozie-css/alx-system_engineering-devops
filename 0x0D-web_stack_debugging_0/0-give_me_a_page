@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Setup a new Ubuntu server with Apache,
+# serving a page containing "Hello Holberton".
+
+# Start Apache service
+service apache2 start
