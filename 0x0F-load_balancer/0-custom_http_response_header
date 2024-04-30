@@ -13,34 +13,30 @@ echo -e "${blue}Updating and performing minor checks...${reset}\n"
 install() {
     command -v "$1" &> /dev/null
     if [ $? -ne 0 ]; then
-        echo -e "Installing: ${brown}$1${reset}\n"
         sudo apt-get update -y -qq && \
         sudo apt-get install -y "$1" -qq || { echo "Failed to install $1"; exit 1; }
-        echo -e "\n"
-    else
-        echo -e "${green}${1} is already installed.${reset}\n"
     fi
 }
 
-# Install nginx
+# Install nginx if not already installed
 install nginx
 
 echo -e "\n${blue}Setting up some minor stuff.${reset}\n"
 
 # Allow nginx through firewall
-sudo ufw allow 'Nginx HTTP'
+sudo ufw allow 'Nginx HTTP' || { echo "Failed to allow Nginx through firewall"; exit 1; }
 
 # Set ownership and permissions for website files
 sudo mkdir -p /var/www/html /var/www/error
-sudo chown -R "$USER":"$USER" /var/www
-sudo chmod -R 755 /var/www
+sudo chown -R "$USER":"$USER" /var/www || { echo "Failed to set ownership for /var/www"; exit 1; }
+sudo chmod -R 755 /var/www || { echo "Failed to set permissions for /var/www"; exit 1; }
 
 # Create index and error pages
-echo "Hello World!" > /var/www/html/index.html
-echo "Ceci n'est pas une page" > /var/www/error/error_404.html
+echo "Hello World!" > /var/www/html/index.html || { echo "Failed to create index.html"; exit 1; }
+echo "Ceci n'est pas une page" > /var/www/error/error_404.html || { echo "Failed to create error_404.html"; exit 1; }
 
 # Backup default server config file
-sudo cp /etc/nginx/sites-enabled/default nginx-sites-enabled_default.backup
+sudo cp /etc/nginx/sites-enabled/default nginx-sites-enabled_default.backup || { echo "Failed to backup default server config file"; exit 1; }
 
 # Configure nginx server with custom header
 server_config="server {
@@ -63,11 +59,13 @@ server_config="server {
 }"
 
 # Apply server configuration
-echo "$server_config" | sudo dd status=none of=/etc/nginx/sites-enabled/default || { echo "Failed to configure nginx"; exit 1; }
+echo "$server_config" | sudo dd status=none of=/etc/nginx/sites-enabled/default || { echo "Failed to apply server configuration"; exit 1; }
 
 # Start or restart nginx service
 if [ "$(pgrep -c nginx)" -le 0 ]; then
-    sudo service nginx start
+    sudo service nginx start || { echo "Failed to start nginx service"; exit 1; }
 else
-    sudo service nginx restart
+    sudo service nginx restart || { echo "Failed to restart nginx service"; exit 1; }
 fi
+
+echo "Nginx installation and configuration completed successfully."
