@@ -14,19 +14,14 @@ file { '/var/www/html/index.html':
     content => 'Hello World!',
 }
 
-exec { 'redirect_me':
-    command  => 'sed -i "24i\	rewrite ^/redirect_me https://th3-gr00t.tk/ permanent;" /etc/nginx/sites-available/default',
-    provider => 'shell',
-    require  => Package['nginx'],
-}
-
-exec { 'HTTP header':
-    command  => 'sed -i "25i\	add_header X-Served-By $hostname;" /etc/nginx/sites-available/default',
-    provider => 'shell',
-    require  => Package['nginx'],
+file { '/etc/nginx/sites-available/default':
+    ensure => present,
+    content => template('nginx/default.erb'),
+    require => Package['nginx'],
+    notify  => Service['nginx'],
 }
 
 service { 'nginx':
-    ensure => running,
+    ensure  => running,
     require => Package['nginx'],
 }
