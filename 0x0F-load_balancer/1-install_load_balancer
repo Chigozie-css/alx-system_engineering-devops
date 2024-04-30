@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Install and configure HAProxy as a load balancer for web servers
+
+# Colors
+blue='\e[1;34m'
+brown='\e[0;33m'
+green='\e[1;32m'
+reset='\033[0m'
+
+echo -e "${blue}Updating and performing minor checks...${reset}\n"
+
+install() {
+	command -v "$1" &> /dev/null
+
+	#shellcheck disable=SC2181
+	if [ $? -ne 0 ]; then
+		echo -e "	Installing: ${brown}$1${reset}\n"
+		sudo apt-get update -y -qq && \
+			sudo apt-get install -y "$1" -qq
+		echo -e "\n"
+	else
+		echo -e "	${green}${1} is already installed.${reset}\n"
+	fi
+}
+
+install haproxy # Install HAProxy
+
+echo -e "\n${blue}Setting up some minor stuff.${reset}\n"
+
+# Backup default HAProxy config file
+sudo cp /etc/haproxy/haproxy.cfg haproxy_default.backup
+
+# Fetch STUDENT_ID
+STUDENT_ID=$(hostname | cut -d'-' -f1)
+
+# HAProxy configuration
+haproxy_config="
+defaults
+  mode http
+  timeout client 15s
+  timeout connect 10s
+  timeout server 15s
+  timeout http-request 10s
+
+frontend th3gr00t-tech-frontend
+    bind *:80
+    default_backend th3gr00t-tech-backend
+
+backend th3gr00t-tech-backend
+    balance roundrobin
+    server ${STUDENT_ID}-web-01 35.243.128.200:80 check
+    server ${STUDENT_ID}-web-02 3.239.120.96:80 check
+"
+
+# Apply HAProxy configuration
+echo "$haproxy_config" | sudo dd status=none of=/etc/haproxy/haproxy.cfg
+
+# Enable HAProxy to be started by init script
+echo "ENABLED=1" | sudo dd status=none of=/etc/default/haproxy
+
+# Start or restart HAProxy service
+if [ "$(pgrep -c haproxy)" -le 0 ]; then
+	sudo service haproxy start
+else
+	sudo service haproxy restart
+fi
