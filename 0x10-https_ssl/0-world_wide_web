@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Script: 0-world_wide_web.sh
+# Description: Displays information about subdomains.
+
+# Colors for output
+blue='\e[1;34m'   # Blue color
+brown='\e[0;33m'  # Brown color
+reset='\033[0m'   # Reset color
+
+# Define subdomains and their corresponding IPs
+subdomains=( "www" "lb-01" "web-01" "web-02" )
+domain="$1"  # Domain name
+sub="$2"     # Subdomain name
+
+# Function to retrieve information using dig command
+dig_cmd () {
+    sub="$2"
+    INFO="$(dig "$sub.$domain" | grep -A1 'ANSWER SECTION:' | awk 'NR==2')"
+    IP=$(echo "$INFO" | awk '{print $5}')
+    RECORD=$(echo "$INFO" | awk '{print $4}')
+
+    # Output the subdomain information
+    echo -e "${brown}The subdomain ${blue}$sub${brown} is a ${blue}$RECORD${brown} record and points to ${blue}$IP${reset}"
+}
+
+# Main script
+if [ $# -eq 1 ]; then
+    # If only domain name is provided, display information for default subdomains
+    for subs in "${subdomains[@]}"; do
+        dig_cmd "$domain" "$subs"  # Call function for each subdomain
+    done
+elif [ $# -eq 2 ]; then
+    # If both domain name and subdomain name are provided, display information for the specified subdomain
+    dig_cmd "$domain" "$sub"  # Call function for the specified subdomain
+fi
